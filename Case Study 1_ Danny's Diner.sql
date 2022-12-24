@@ -110,7 +110,7 @@ SELECT customer_id, product_name, MAX(number_of_purchases) AS maximum_purchases
 FROM purchases
 WHERE rnk = 1
 GROUP BY customer_id, product_name;
--- Ramen is the most famous dish among all the customers. The customer B likes all the dishes equally. The other two dishes need to be focussed.
+-- Ramen is the most famous dish among all the customers. The customer B likes all the dishes equally. The dishes other than Ramen need to be focussed.
 
 -- 6. Which item was purchased first by the customer after they became a member?
 WITH CTE_purchased AS
@@ -157,7 +157,7 @@ GROUP BY sales.customer_id;
 -- The customer B has earned maximum points, followed by customer A. The customer C has earned the least points.
 
 -- 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
-SELECT sales.customer_id, SUM(CASE WHEN order_date <= DATE_ADD(join_date, INTERVAL 6 DAY) AND join_date <= order_date THEN price*20 ELSE price*10 END) AS total_points
+SELECT sales.customer_id, SUM(CASE WHEN menu.product_name = 'sushi' THEN menu.price*20 WHEN order_date <= DATE_ADD(join_date, INTERVAL 6 DAY) AND join_date <= order_date THEN price*20 ELSE price*10 END) AS total_points
 FROM sales 
 INNER JOIN menu ON sales.product_id = menu.product_id
 INNER JOIN members ON sales.customer_id = members.customer_id
